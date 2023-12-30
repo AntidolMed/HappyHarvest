@@ -1,10 +1,12 @@
 'use client'
 
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, Fragment } from 'react'
 import { Unity, useUnityContext } from "react-unity-webgl";
+import { PulseLoader } from 'react-spinners';
+import styles from '@/components/HappyHarvest.module.scss'
 
 export default function HappyHarvestGame() {
-  const { unityProvider } = useUnityContext({
+  const { unityProvider, isLoaded, loadingProgression } = useUnityContext({
     loaderUrl: "UnityBuild/HappyHarvest-build.loader.js",
     dataUrl: "UnityBuild/HappyHarvest-build.data",
     frameworkUrl: "UnityBuild/HappyHarvest-build.framework.js",
@@ -42,6 +44,17 @@ export default function HappyHarvestGame() {
   }, [diff]);
 
   return (
-    <Unity unityProvider={unityProvider} style={{ height: windowSize.height, width: windowSize.width}} />
+    <Fragment>
+      { !isLoaded && (
+        <div className={styles.container}>
+          <div className={styles.item}>
+            <PulseLoader color="#fff600"/>
+          </div>
+          <div className={styles.item}>Cargando, ya se inicia, rey...</div>
+          <div className={styles.item}>Progreso: {Math.round(loadingProgression * 100)}%</div>
+        </div>
+      )}
+      <Unity unityProvider={unityProvider} style={{ height: windowSize.height, width: windowSize.width, visibility: isLoaded ? "visible" : "hidden"}} />
+    </Fragment>
   )
 }
